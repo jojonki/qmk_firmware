@@ -1,10 +1,30 @@
 
 #include QMK_KEYBOARD_H
 
+#include "process_unicode.h"
+
 #define PAD 0
 #define MOUSE 1
 #define NUM 2
 #define DIR 3
+
+enum unicode_names {
+    BEER,
+    THINK,
+    TH_UP,
+    TH_DW,
+};
+const uint32_t PROGMEM unicode_map[]=
+{
+    [BEER] = 0x1f37a,
+    [THINK] = 0x1f914,
+    [TH_UP] = 0x1f44d,
+    [TH_DW] = 0x1f44e,
+};
+
+enum custom_keycodes {
+  QMKBEST = SAFE_RANGE,
+};
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -21,10 +41,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 
   [PAD] = LAYOUT_ortho_jon44(
-      KC_A, KC_B, KC_C,   KC_PSLS,
+      X(BEER), QMKBEST, X(THINK),   KC_PSLS,
       KC_D, KC_E, KC_F,   KC_PAST,
       KC_G, KC_H, KC_I,   KC_PMNS,
-      KC_K, MO(MOUSE), KC_L, KC_M
+      KC_LSHIFT, LT(MOUSE, KC_F), KC_L, KC_M
   ),
 
   [MOUSE] = LAYOUT_ortho_jon44(
@@ -34,68 +54,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       KC_K, DF(PAD), KC_L, KC_M
   ),
 
-/* QWERTY
- * .-----------------------------------------------------------------------------------------------------------------------------------------------.
- * | ESC    | Q      | W      | E      | R      | T      | Y      | U      | I      | O      | P      | BACKSP |   7    |   8    |   9    |   /    |
- * |--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------|
- * | TAB    | A      | S      | D      | F      | G      | H      | J      | K      | L      | ;      | '      |   4    |   5    |   6    |   *    |
- * |--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------|
- * | SHIFT  | Z      | X      | C      | V      | B      | N      | M      | ,      | .      | /      | ENT/SFT|   1    |   2    |   3    |   -    |
- * |--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------|
- * | LCTRL  | LGUI   | ALT    | ALT    | NUM    | SHIFT  | SPACE  | DIR    | RGUI   | RALT   | DEL    | CTRL   |   0    |   0    |   .    |   +    |
- * '-----------------------------------------------------------------------------------------------------------------------------------------------'
- */
-
-//  [_QW] = LAYOUT_ortho_4x16(
-//  KC_ESC,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC, KC_KP_7, KC_KP_8, KC_KP_9, KC_PSLS,
-//  KC_TAB,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, KC_KP_4, KC_KP_5, KC_KP_6, KC_PAST,
-//  KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, SFT_T(KC_ENT), KC_KP_1, KC_KP_2, KC_KP_3, KC_PMNS,
-//  KC_LCTL, KC_LGUI, KC_LALT, KC_LALT, MO(NUM), KC_LSFT, KC_SPC,  MO(DIR), KC_RGUI, KC_RALT, KC_DEL,  KC_RCTL, KC_KP_0, KC_KP_0, KC_KP_DOT, KC_PPLS
-//  ),
-
-/* NUMBERS
- * .-----------------------------------------------------------------------------------------------------------------------------------------------.
- * |        | F1     | F2     | F3     | F4     | F5     | F6     | F7     | F8     | F9     | F10    | NUMLOCK|   /    |   *    |   -    |        |
- * |--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------|
- * |    `   | 1      | 2      | 3      | 4      | 5      | 6      | 7      | 8      | 9      | 0      |        |        |        |   +    |        |
- * |--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------|
- * |        | F11    | F12    |        |        |        | ENTER  | SHIFT  | RGUI   | ./ALT  | BKSC   |        |        |        | ENTER  |        |
- * |        |        |        |        |        |        |        |        |        |        |CTRLhold|		   |        |        |        |        |
- * |--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------|        |
- * |        |        |        |        |        |        | ENTER  | SHIFT  |        |        |        |        |        |        |        |        |
- * '-----------------------------------------------------------------------------------------------------------------------------------------------'
- */
-
-//  [NUM] = LAYOUT_ortho_4x16(
-//  _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,   KC_NLCK, KC_PSLS, KC_PAST, KC_PMNS, _______,
-//  KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,     _______, _______, _______, KC_PPLS, _______,
-//  _______, KC_F11,  KC_F12,  _______, _______, _______, KC_ENT,  KC_RSFT, KC_RGUI, ALT_T(KC_DOT), CTL_T(KC_BSPC), _______, _______, _______, KC_PENT, _______,
-//  _______, _______, _______, _______, _______, _______, KC_ENT,  KC_RSFT, _______, _______, _______,  _______, _______, _______, _______, _______
-//  ),
-
-/* DIRECTIONS
- * .-----------------------------------------------------------------------------------------------------------------------------------------------.
- * | RESET  | TAB    |   up   |        | INS    | CTRL   | SHIFT  | PgUp   | Home   |   -    |   =    |  DEL   |        |        |        |        |
- * |--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------|
- * | CAPSLK | left   |  down  | right  | PrScr  | SHIFT  | CTRL   | PgDn   | End    |   [    |   ]    |   \    |        |        |        |        |
- * |--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------|
- * |        | P-Brk  |        |        |        |        |        |        | RGUI   | ALT    |        |        |        |        |        |        |
- * |--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------+--------|
- * | KEYPAD |        |        |        |        |        |        |        |        |        |        |        |        |        |        |        |
- * '-----------------------------------------------------------------------------------------------------------------------------------------------'
- */
-
-//  [DIR] = LAYOUT_ortho_4x16(
-//  RESET,   KC_TAB,  KC_UP,   _______, KC_INS,  KC_LCTL, KC_LSFT, KC_PGUP, KC_HOME, KC_MINS, KC_EQL,  KC_DEL,  _______, _______, _______, _______,
-//  KC_CAPS, KC_LEFT, KC_DOWN, KC_RGHT, KC_PSCR, KC_LSFT, KC_LCTL, KC_PGDN, KC_END,  KC_LBRC, KC_RBRC, KC_BSLS, _______, _______, _______, _______,
-//  _______, KC_PAUS, _______, _______, _______, _______, _______, _______, KC_RGUI, KC_RALT, _______, _______, _______, _______, _______, _______,
-//  DF(PAD), _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
-//  ),
-
 };
 
-void matrix_init_user(void) {
 
+void matrix_init_user(void) {
+    set_unicode_input_mode(UC_OSX);
 }
 
 void matrix_scan_user(void) {
@@ -103,6 +66,25 @@ void matrix_scan_user(void) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  switch (keycode) {
+    case QMKBEST:
+      if (record->event.pressed) {
+        // when keycode QMKBEST is pressed
+        SEND_STRING(SS_TAP(X_LGUI));
+		/* send_unicode_hex_string("0028 30CE 0CA0 75CA 0CA0 0029 30CE 5F61 253B 2501 253B"); */
+        send_unicode_hex_string("2665");
+        /* SEND_STRING(SS_LCTRL(SS_LALT(" "))); // Select the previous input source */
+
+        //samples
+        //SEND_STRING("QMK is the best thing ever!");
+        /* SEND_STRING("https://qmk.fm/" SS_TAP(X_ENTER)); */
+        /* SEND_STRING(SS_LCTRL("ac")); */
+      } else {
+        // when keycode QMKBEST is released
+      }
+      break;
+
+  }
   return true;
 }
 
